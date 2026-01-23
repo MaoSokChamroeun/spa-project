@@ -15,19 +15,19 @@ const Gallery = () => {
             <img
               src="https://www.nagaworld.com/wp-content/uploads/2015/05/web-The-Spa_Four-hands-massage-766x375.jpg"
               alt="Spa Banner"
-              className="w-full h-[400px] md:h-[600px] object-cover"
+              className="w-full h-[400px] md:h-[950px] object-cover"
             />
           </figure>
         </div>
 
         <div className="max-w-7xl mx-auto px-6 mb-20">
-          <p className="text-[35px] font-extrabold text-center mt-16 uppercase tracking-widest text-gray-800">
+          <p className="text-[35px] font-extrabold text-center mt-5 lg:mt-10 xl:mt-10 uppercase tracking-widest text-gray-800">
             Gallery
           </p>
           <p className="text-center">Gallery Customer In Our shop spa</p>
 
           {/* Grid Container */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:mt-10 xl:mt-10 mt-5">
             {gallerys.map((item) => (
               <div
                 key={item.id}

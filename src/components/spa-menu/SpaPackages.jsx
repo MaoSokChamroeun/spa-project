@@ -1,69 +1,115 @@
 import React from "react";
 import Layout from "../../layout/Layout";
-import packages from "../../data/pakage";
-const SpaPackages = () => {
+import useGetServiceCategory from "../../hooks/adminHook/getServiceById/useGetServiceCategory";
+import contentMap from "../api/contentMap";
+import { useLang } from "../../components/context/LanguageContext"; // ១. Import useLang
+import { useTranslation } from "react-i18next"; // ២. Import useTranslation សម្រាប់ Static text
+
+const SpaPackages = ({ categorySlug }) => {
+  const { lang } = useLang(); // ៣. ទាញយកភាសាដែលកំពុងប្រើ (kh, en, ឬ ch)
+  const { t } = useTranslation();
+  
+  const { servicesCategory = [] } = useGetServiceCategory(categorySlug);
+
+  const activePage = contentMap[categorySlug] || {
+    title: "Spa Services",
+    image: "https://www.angkorspa.net/wp-content/uploads/2025/11/Oil-Massage-1890x760.png",
+  };
+
   return (
-    <>
-      <Layout>
-        <div className="w-full">
-          <div className="w-full">
-            <figure className="w-full">
-              <img
-                src="https://www.angkorspa.net/wp-content/uploads/2025/11/Oil-Massage-1890x760.png"
-                alt=""
-                className="object-cover w-full h-[600px]"
-              />
-            </figure>
-          </div>'
-          <div className="max-w-7xl mx-auto mt-10 mb-10">
-                <p className="text-center text-[35px] font-extrabold mb-5">Spa Packages</p>
-                <p className="mb-10 text-gray-500">Nurturing elements and purifying body treatments promote tranquility and leave you a feeling of totally rejuvenated, gently relaxed and wonderfully invigorated. Nourish your face and body while promoting relaxation of the mind.</p>
-                <p className="text-gray-500">Our spa packages have been carefully designed to create various ways to escape the stress of everyday life. Treat yourself to a relaxing ritual , and redefine your mental and physical well-being, or pamper someone you love with the gift of rejuvenation.</p>
-            </div>
-          <div className="max-w-7xl mx-auto border border-gray-300 mt-5">
-            
-            <div>
-              {packages.map((items) => (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 border-b-1 border-gray-300" key={items.id}>
-                  {/* LEFT CONTENT (2 columns) */}
-                  <div className="lg:col-span-2 p-8 ">
-                    <h1 className="text-[30px] font-extrabold text-gray-800">
-                      {items.name}
-                    </h1>
+    <Layout>
+      <div className="w-full">
+        <figure className="w-full">
+          <img
+            src={activePage.image}
+            className="object-cover w-full h-[500px] lg:h-[950px] xl:h-[950px]"
+            alt={activePage.title}
+          />
+        </figure>
 
-                    <p className="mt-4 text-gray-600">
-                      <span className="font-semibold">Benefit:</span> 
-                      {items.benefits[0]}
-                    </p>
+        <div className="mt-10 max-w-7xl mx-auto px-4">
+          <h1 className="text-center text-[35px] font-extrabold uppercase tracking-wide">
+             {/* បើក្នុង contentMap មានបែងចែកភាសាដែរ អាចប្រើ activePage.title[lang] */}
+            {activePage.title}
+          </h1>
+          <p className="text-center mt-4 text-gray-600 max-w-2xl mx-auto">
+            {/* ប្រើ t() សម្រាប់ពាក្យថេរដែលបានកំណត់ក្នុង i18n.js */}
+            {t('experience_msg')} {activePage.title}. {t('rejuvenate_msg')}
+          </p>
 
-                    <div className="mt-4">
-                      <p className="font-semibold text-gray-700">Method:</p>
-                      <ul className="list-disc ml-6 mt-2 text-gray-600 space-y-1">
-                        <li>{items.method.steps[0]}</li>
-                        <li>{items.method.steps[1]}</li>
-                      </ul>
-                    </div>
-
-                    <p className="mt-4 text-gray-600">
-                      <span className="font-semibold">Massage:</span> 
-                      {items.method.steps[2]}
-                    </p>
+          <div className="max-w-7xl mx-auto p-6 space-y-6">
+            {servicesCategory?.data && servicesCategory.data.length > 0 ? (
+              servicesCategory.data.map((item, index) => (
+                <div
+                  key={item._id || item.id || index}
+                  className="grid grid-cols-1 md:grid-cols-3 h-auto md:h-[350px] gap-6 border border-gray-400 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="md:col-span-1">
+                    <img
+                      src={`http://localhost:5000/public/services/${item.image}`}
+                      alt={item.title?.[lang]}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
-                  {/* RIGHT SIDE (PRICE + BUTTON) */}
-                  <div className="border-t lg:border-t-0 lg:border-l border-gray-300 flex flex-col items-center justify-center p-8">
-                    <p className="text-gray-600 mb-3">USD63 / 90min</p>
-                    <button className="bg-gray-700 text-white px-6 py-2 rounded hover:bg-gray-800 transition">
-                      Book Now
+                  <div className="md:col-span-1 p-6 flex flex-col justify-between">
+                    <div>
+                      <h2 className="text-2xl font-semibold text-gray-800">
+                        {/* ៤. បង្ហាញ Title តាមភាសាដែលបានរើស */}
+                        {item.title?.[lang] || item.title?.en}
+                      </h2>
+
+                      <p className="mt-3 text-gray-600 text-sm leading-relaxed line-clamp-4">
+                        {/* ៥. បង្ហាញ Description តាមភាសាដែលបានរើស */}
+                        {item.description?.[lang] || item.description?.en}
+                      </p>
+
+                      <div className="mt-4">
+                        <p className="text-sm font-medium text-gray-700">
+                          {t('method')}:
+                        </p>
+                        <ul className="list-disc list-inside text-sm text-gray-600 mt-1 space-y-1">
+                          {item.methods?.length > 0 ? (
+                            item.methods.map((method, i) => (
+                              <li key={i}>{method}</li>
+                            ))
+                          ) : (
+                            <li className="list-none text-gray-400 italic">
+                              {t('methods')}
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="md:col-span-1 p-6 flex flex-col justify-center items-center bg-gray-50 border-l border-gray-100">
+                    <p className="text-2xl font-bold text-gray-800">
+                      USD {item.price}
+                    </p>
+                    <p className="text-sm text-gray-500 mb-6">
+                      {item.duration} {t('minutes')}
+                    </p>
+
+                    <button className="px-8 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium">
+                      {t('book_now')}
                     </button>
                   </div>
                 </div>
-              ))}
-            </div>
+              ))
+            ) : (
+              <div className="text-center py-20 border-2 border-dashed border-gray-200 rounded-3xl">
+                <p className="text-gray-400 italic">
+                  {servicesCategory === undefined
+                    ? t('loading')
+                    : t('no_services')}
+                </p>
+              </div>
+            )}
           </div>
         </div>
-      </Layout>
-    </>
+      </div>
+    </Layout>
   );
 };
 

@@ -9,6 +9,7 @@ export default defineConfig({
       fontFamily: {
         // This adds 'font-josefin' as a utility class
         josefin: ["'Josefin Sans'", "sans-serif"],
+        kantumruy: ["'Kantumruy Pro'", "sans-serif"]
       },
     },
   },
